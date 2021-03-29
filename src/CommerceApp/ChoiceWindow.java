@@ -1,28 +1,23 @@
 package CommerceApp;
-import Adapters.FrameAdapter;
 import Adapters.JDBCAdapter;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.Toolkit;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.RowSorter;
 import javax.swing.SortOrder;
-import javax.swing.border.Border;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import util.Operation;
-import util.Utilities;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -207,7 +202,7 @@ public class ChoiceWindow extends javax.swing.JDialog {
     public ArrayList<Object> getResult(){
 	return result;
     }
-	
+
     private void newFilter(String filterText) {
         String orderBy;
         

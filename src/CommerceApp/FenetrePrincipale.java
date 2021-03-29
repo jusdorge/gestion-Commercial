@@ -7,15 +7,31 @@ package CommerceApp;
 
 import Adapters.FrameAdapter;
 import Adapters.JDBCAdapter;
-import java.awt.Toolkit;
+import CommerceApp.fileDir.NewDBJDialog;
 import java.awt.event.KeyEvent;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.SwingUtilities;
+import javax.swing.table.TableColumn;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import util.FileProcess;
 import util.Operation;
 import util.Utilities;
@@ -134,6 +150,8 @@ public class FenetrePrincipale extends javax.swing.JFrame {
         jMenuItemSaveProcTrig = new javax.swing.JMenuItem();
         archiveMenuItem = new javax.swing.JMenuItem();
         createTables = new javax.swing.JMenuItem();
+        jSeparator16 = new javax.swing.JPopupMenu.Separator();
+        jMenuItem5 = new javax.swing.JMenuItem();
         windowMenu = new javax.swing.JMenu();
         helpMenu = new javax.swing.JMenu();
         jMenuItem3 = new javax.swing.JMenuItem();
@@ -168,6 +186,11 @@ public class FenetrePrincipale extends javax.swing.JFrame {
         FileMenu.setText("Fichier");
 
         jMenuItem1.setText("Nouveau");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
         FileMenu.add(jMenuItem1);
 
         jMenuItem2.setText("Modifier");
@@ -581,6 +604,11 @@ public class FenetrePrincipale extends javax.swing.JFrame {
 
         toolsMenu.setMnemonic('O');
         toolsMenu.setText("Outils");
+        toolsMenu.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                toolsMenuActionPerformed(evt);
+            }
+        });
 
         saveDataBaseMenuItem.setText("Sauvegarder");
         saveDataBaseMenuItem.addActionListener(new java.awt.event.ActionListener() {
@@ -628,6 +656,15 @@ public class FenetrePrincipale extends javax.swing.JFrame {
             }
         });
         toolsMenu.add(createTables);
+        toolsMenu.add(jSeparator16);
+
+        jMenuItem5.setText("Ouvrir un fichier excel");
+        jMenuItem5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem5ActionPerformed(evt);
+            }
+        });
+        toolsMenu.add(jMenuItem5);
 
         menuBar.add(toolsMenu);
 
@@ -1066,6 +1103,112 @@ public class FenetrePrincipale extends javax.swing.JFrame {
         });
     }//GEN-LAST:event_customerSearchMenuItemActionPerformed
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // create a new data base with an empty files
+        NewDBJDialog dialog = new NewDBJDialog(parentFrame,true);
+        dialog.setVisible(true);
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
+        final JFileChooser fc = new JFileChooser();
+        int returnVal = fc.showOpenDialog(parentFrame);
+        if (returnVal == JFileChooser.APPROVE_OPTION){
+            File file = fc.getSelectedFile();
+            System.out.println(file.getAbsolutePath());
+            System.out.println(file.getName());
+            readExcelFile(file.getAbsolutePath());
+        }
+    }//GEN-LAST:event_jMenuItem5ActionPerformed
+
+    private void toolsMenuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_toolsMenuActionPerformed
+        
+    }
+    
+    private void readExcelFile(String file){    
+    try {
+    InputStream fs = new FileInputStream(file);
+    Workbook wb = WorkbookFactory.create(fs);
+    int sheetCount = wb.getNumberOfSheets();
+    System.out.println("number of sheet(s) : " + sheetCount);
+    Sheet sheet = wb.getSheetAt(0);
+    Row row;
+    Cell cell;
+
+    int rows; // No of rows
+    rows = sheet.getPhysicalNumberOfRows();
+
+    int cols = 0; // No of columns
+    int tmp = 0;
+
+    // This trick ensures that we get the data properly even if it doesn't start from first few rows
+    for(int i = 0; i < 10 || i < rows; i++) {
+        row = sheet.getRow(i);
+        if(row != null) {
+            tmp = sheet.getRow(i).getPhysicalNumberOfCells();
+            if(tmp > cols) cols = tmp;
+        }
+    }
+    
+    // data set for the cells
+    Object [][] data = new Object[rows][cols];
+    String [] columnNames = new String[cols];
+     for(int c = 0; c < cols; c++) {
+                cell = sheet.getRow(0).getCell((short)c);
+                if(cell != null) {
+                    columnNames[c] = cell.toString();
+                    System.out.print(cell.toString() + "\t");
+                }
+     }
+     System.out.println();
+    for(int r = 1; r < rows; r++) {
+        row = sheet.getRow(r);
+        if(row != null) {
+            for(int c = 0; c < cols; c++) {
+                cell = row.getCell((short)c);
+                if(cell != null) {
+                    // Your code here
+                    System.out.print(cell.toString() + "\t");
+                    data[r][c]=cell.toString();
+                }
+            }
+            System.out.println();
+        }
+    }
+    JTable table = new JTable(data,columnNames);
+    JScrollPane scrollPane = new JScrollPane(table);
+    table.setFillsViewportHeight(true);
+    TableColumn column = null;
+    for (int i = 0; i < table.getColumnCount(); i++){
+        column = table.getColumnModel().getColumn(i);
+        if ((i == 2)||(i == 3)){
+            column.setPreferredWidth(350);
+        }else{
+            column.setPreferredWidth(150);
+        }
+    }   
+    //third column is bigger
+    createAndShowGUI(scrollPane);
+    } catch(Exception ioe) {
+    ioe.printStackTrace();
+    }
+    
+    }//GEN-LAST:event_toolsMenuActionPerformed
+    private static void createAndShowGUI(JScrollPane pane) {
+        //Create and set up the window.
+        JFrame frame = new JFrame("SimpleTableDemo");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        //Create and set up the content pane.
+        JPanel newContentPane = new JPanel();
+        newContentPane.add(pane);
+        newContentPane.setOpaque(true); //content panes must be opaque
+        frame.setContentPane(newContentPane);
+        FrameAdapter.centerFrame(frame);
+
+        //Display the window.
+        frame.pack();
+        frame.setVisible(true);
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu BuyMenu;
     private javax.swing.JMenu CustomerMenu;
@@ -1105,6 +1248,7 @@ public class FenetrePrincipale extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItem5;
     private javax.swing.JMenuItem jMenuItemSaveProcTrig;
     private javax.swing.JPopupMenu.Separator jSeparator1;
     private javax.swing.JPopupMenu.Separator jSeparator10;
@@ -1113,6 +1257,7 @@ public class FenetrePrincipale extends javax.swing.JFrame {
     private javax.swing.JPopupMenu.Separator jSeparator13;
     private javax.swing.JPopupMenu.Separator jSeparator14;
     private javax.swing.JPopupMenu.Separator jSeparator15;
+    private javax.swing.JPopupMenu.Separator jSeparator16;
     private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JPopupMenu.Separator jSeparator3;
     private javax.swing.JPopupMenu.Separator jSeparator4;
