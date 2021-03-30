@@ -7,7 +7,6 @@ package CommerceApp;
 
 import Adapters.FrameAdapter;
 import Adapters.JDBCAdapter;
-import CommerceApp.fileDir.NewDBJDialog;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -1105,9 +1104,7 @@ public class FenetrePrincipale extends javax.swing.JFrame {
     }//GEN-LAST:event_customerSearchMenuItemActionPerformed
 
     private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // create a new data base with an empty files
-        NewDBJDialog dialog = new NewDBJDialog(parentFrame,true);
-        dialog.setVisible(true);
+        // create a new database
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     private void jMenuItem5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem5ActionPerformed
