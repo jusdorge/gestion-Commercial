@@ -18,6 +18,7 @@ import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.table.TableColumn;
@@ -1129,8 +1130,10 @@ public class FenetrePrincipale extends javax.swing.JFrame {
     InputStream fs = new FileInputStream(file);
     Workbook wb = WorkbookFactory.create(fs);
     int sheetCount = wb.getNumberOfSheets();
-    System.out.println("number of sheet(s) : " + sheetCount);
-    Sheet sheet = wb.getSheetAt(0);
+    
+    JTabbedPane tabbedPane = new JTabbedPane();
+    for (int sh=0; sh < sheetCount; sh++){
+    Sheet sheet = wb.getSheetAt(sh);
     Row row;
     Cell cell;
 
@@ -1156,10 +1159,10 @@ public class FenetrePrincipale extends javax.swing.JFrame {
                 cell = sheet.getRow(0).getCell((short)c);
                 if(cell != null) {
                     columnNames[c] = cell.toString();
-                    System.out.print(cell.toString() + "\t");
+     
                 }
      }
-     System.out.println();
+     
     for(int r = 1; r < rows; r++) {
         row = sheet.getRow(r);
         if(row != null) {
@@ -1167,35 +1170,40 @@ public class FenetrePrincipale extends javax.swing.JFrame {
                 cell = row.getCell((short)c);
                 if(cell != null) {
                     // Your code here
-                    System.out.print(cell.toString() + "\t");
+            
                     data[r][c]=cell.toString();
                 }
             }
-            System.out.println();
+            
         }
     }
     JTable table = new JTable(data,columnNames);
+    TableColumn column = null;
+    
     JScrollPane scrollPane = new JScrollPane(table);
     table.setFillsViewportHeight(true);
-    TableColumn column = null;
+    
     for (int i = 0; i < table.getColumnCount(); i++){
         column = table.getColumnModel().getColumn(i);
-        if ((i == 2)||(i == 3)){
-            column.setPreferredWidth(350);
-        }else{
+        //if ((i == 2)||(i == 3)){
             column.setPreferredWidth(150);
-        }
+        //}else{
+          //  column.setPreferredWidth(150);
+        //}
     }   
-    //third column is bigger
-    createAndShowGUI(scrollPane);
+    JPanel panel = new JPanel();
+    panel.add(scrollPane);
+    tabbedPane.add(sheet.getSheetName(),panel);
+    }
+    createAndShowGUI(tabbedPane);
     } catch(Exception ioe) {
     ioe.printStackTrace();
     }
     
     }//GEN-LAST:event_toolsMenuActionPerformed
-    private static void createAndShowGUI(JScrollPane pane) {
+    private static void createAndShowGUI(JTabbedPane pane) {
         //Create and set up the window.
-        JFrame frame = new JFrame("SimpleTableDemo");
+        JFrame frame = new JFrame("Excel File Contents");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         //Create and set up the content pane.
