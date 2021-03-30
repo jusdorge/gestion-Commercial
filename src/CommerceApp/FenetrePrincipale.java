@@ -7,6 +7,7 @@ package CommerceApp;
 
 import Adapters.FrameAdapter;
 import Adapters.JDBCAdapter;
+import java.awt.Dimension;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -1176,18 +1177,15 @@ public class FenetrePrincipale extends javax.swing.JFrame {
     }
     JTable table = new JTable(data,columnNames);
     TableColumn column = null;
+        
+    for (int i = 0; i < table.getColumnCount(); i++){
+        column = table.getColumnModel().getColumn(i);
+        column.setPreferredWidth(250);
+    }
     
     JScrollPane scrollPane = new JScrollPane(table);
     table.setFillsViewportHeight(true);
     
-    for (int i = 0; i < table.getColumnCount(); i++){
-        column = table.getColumnModel().getColumn(i);
-        //if ((i == 2)||(i == 3)){
-            column.setPreferredWidth(150);
-        //}else{
-          //  column.setPreferredWidth(150);
-        //}
-    }   
     JPanel panel = new JPanel();
     panel.add(scrollPane);
     tabbedPane.add(sheet.getSheetName(),panel);
@@ -1202,7 +1200,7 @@ public class FenetrePrincipale extends javax.swing.JFrame {
         //Create and set up the window.
         JFrame frame = new JFrame("Excel File Contents");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
+        
         //Create and set up the content pane.
         JPanel newContentPane = new JPanel();
         newContentPane.add(pane);
