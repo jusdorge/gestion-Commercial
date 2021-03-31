@@ -1177,15 +1177,20 @@ public class FenetrePrincipale extends javax.swing.JFrame {
     }
     JTable table = new JTable(data,columnNames);
     TableColumn column = null;
+
+    JScrollPane scrollPane = new JScrollPane(table);
+    scrollPane.setPreferredSize(new Dimension(1000,500));
+    table.setFillsViewportHeight(true);
         
     for (int i = 0; i < table.getColumnCount(); i++){
         column = table.getColumnModel().getColumn(i);
-        column.setPreferredWidth(250);
+        if (i==2){
+            column.setPreferredWidth(350);
+        }else{
+            column.setPreferredWidth(100);
+        }
     }
-    
-    JScrollPane scrollPane = new JScrollPane(table);
-    table.setFillsViewportHeight(true);
-    
+        
     JPanel panel = new JPanel();
     panel.add(scrollPane);
     tabbedPane.add(sheet.getSheetName(),panel);
